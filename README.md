@@ -10,3 +10,9 @@ SISTEMA DE GESTIÓN DE PRODUCCIÓN Y PEDIDOS Para microempresa de artesanías en
 
 Spring Boot Version 3.5.11
 java version 17
+
+**Dependencies**
+
+Spring Web
+Spring Data JPA 
+PostgreSql Driver
