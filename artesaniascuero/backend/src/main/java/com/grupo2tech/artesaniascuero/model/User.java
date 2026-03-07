@@ -20,8 +20,11 @@ public class User {
     @Column(nullable = false)
     private String role; // e.g., "USER", "ADMIN"
     
+    @Column(nullable = false)
+    private boolean enabled = true; // Para la activación/desactivación de la cuenta
 
     // Getters and Setters
+    
     
     public Long getId() {
         return id;
@@ -54,12 +57,20 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
-
+    
     public String getEmail() {
         return email;
     }
-
+    
     public void setEmail(String email) {
         this.email = email;
     }   
+    
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }

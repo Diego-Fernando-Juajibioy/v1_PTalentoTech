@@ -1,6 +1,6 @@
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:3306/artesanias_cuero
+        url: jdbc:postgresql://localhost:5432/artesanias_cuero
         username: postgres
         password: 32tn234hljsae
     jpa:
