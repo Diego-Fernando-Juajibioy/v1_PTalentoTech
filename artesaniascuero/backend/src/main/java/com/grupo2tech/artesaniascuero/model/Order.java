@@ -7,7 +7,7 @@ public class Order {
     private Long id;
 
     @Column (nullable = false)
-    private String customer_id;
+    private long customer_id;
 
     @Column (nullable = false)
     private String status; 
@@ -27,11 +27,11 @@ public class Order {
         this.id = id;
     }
 
-    public String getCustomer_id() {
+    public long getCustomer_id() {
         return customer_id;
     }
 
-    public void setCustomer_id(String customer_id) {
+    public void setCustomer_id(long customer_id) {
         this.customer_id = customer_id;
     }
 

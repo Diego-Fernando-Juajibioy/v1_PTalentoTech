@@ -25,16 +25,28 @@ public class MaterialService {
         return materialRepository.findAll();
     }
 
+    @SuppressWarnings("null")
     public Material getMaterialById(Long id){
+        if (!materialRepository.existsById(id)){
+            throw new RuntimeException("El material no existe");
+        }
         return materialRepository.findById(id).orElse(null);
     }
 
+    @SuppressWarnings("null")
     public Material updateMaterial(Long id, Material material){
+        if (!materialRepository.existsById(id)){
+            throw new RuntimeException("El material no existe");
+        }
         material.setId(id);
         return materialRepository.save(material);
     }
 
+    @SuppressWarnings("null")
     public void deleteMaterial(Long id){
+        if (!materialRepository.existsById(id)){
+            throw new RuntimeException("El material no existe");
+        }
         materialRepository.deleteById(id);
     }
 
