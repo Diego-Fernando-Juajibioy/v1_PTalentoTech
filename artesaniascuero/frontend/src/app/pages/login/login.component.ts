@@ -1,34 +1,44 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
-import { AuthService } from '../../core/services/auth.service';
-import { error } from "console";
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { UserService } from '../../core/services/user.service';
+import { FormsModule } from '@angular/forms';
+
+
 @Component({
-    selector: "app-login",
-    templateUrl: "./login.component.html",
-    styleUrls: ["./login.component.css"]
+  selector: 'app-login',
+  standalone: true,
+  imports: [FormsModule],
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
-    username: string = "";
-    password: string = "";
-    errorMessage: string = "";
 
-    constructor(private authService: AuthService, private router: Router) {}
+export class LoginComponent {
+  username: string = '';
+  password: string = '';
+  constructor(
+    private userService: UserService,
+    private router: Router
+  ) {}
+  login(){
+    this.userService.getUsers().subscribe(users => {
+      const user = users.find((u:any) =>
+        u.username === this.username && u.password === this.password
+      );
 
-    ngOnInit(): void {}
+      if(user){
 
-    login(): void {
-        this.authService.login(this.username, this.password).subscribe(
-            (success: any) => {
-                if (success) {
-                    this.router.navigate(['/home']);
-                } else {
-                    this.errorMessage = "Invalid username or password.";
-                }
-            },
-            
-            (error: any) => {
-                this.errorMessage = "An error occurred during login. Please try again.";
-            }
-        );
-    }
+        if(user.role === 'ADMIN'){
+          this.router.navigate(['/home']);
+        }
+
+        else{
+          this.router.navigate(['/home']);
+        }
+
+      }
+      else{
+        alert("Usuario o contraseña incorrectos");
+      }
+    });
+  }
 }
