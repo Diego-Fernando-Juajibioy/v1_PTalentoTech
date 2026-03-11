@@ -1,44 +1,40 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '../../core/services/user.service';
+import { AuthService } from '../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [FormsModule],
+  standalone: true,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-
 export class LoginComponent {
-  username: string = '';
-  password: string = '';
+
+  username = '';
+  password = '';
+
   constructor(
-    private userService: UserService,
+    private authService: AuthService,
     private router: Router
-  ) {}
-  login(){
-    this.userService.getUsers().subscribe(users => {
-      const user = users.find((u:any) =>
-        u.username === this.username && u.password === this.password
-      );
+  ) { }
 
-      if(user){
+  login() {
 
-        if(user.role === 'ADMIN'){
+    this.authService.login(this.username, this.password)
+      .subscribe(success => {
+
+        if (success) {
           this.router.navigate(['/home']);
         }
-
-        else{
-          this.router.navigate(['/home']);
+        else {
+          alert("Credenciales incorrectas");
         }
 
-      }
-      else{
-        alert("Usuario o contraseña incorrectos");
-      }
-    });
+      });
+
   }
+
 }

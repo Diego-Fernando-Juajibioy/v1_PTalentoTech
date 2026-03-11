@@ -1,32 +1,32 @@
 import { Component, OnInit } from "@angular/core";
-import { UserService } from "../../core/services/user.service";
-import { OrderService } from "../../core/services/order.service";
+import { AuthService } from "../../core/services/auth.service";
+import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
+
 
 @Component({
-    selector: "app-home",
-    templateUrl: "./home.component.html",
-    styleUrls: ["./home.component.css"]
+  selector: "app-home",
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: "./home.component.html",
+  styleUrls: ["./home.component.css"]
 })
+
 export class HomeComponent implements OnInit {
-    usersCount: number = 0;
-    ordersCount: number = 0;
 
-    constructor(private userService: UserService, private orderService: OrderService) {}
+  role = "";
 
-    ngOnInit(): void {
-        this.loadUsersCount();
-        this.loadOrdersCount();
-    }
+  constructor(private authService: AuthService, private router: Router) { }
 
-    private loadUsersCount(): void {
-        this.userService.getUsers().subscribe(users => {
-            this.usersCount = users.length;
-        });
-    }
+  ngOnInit() {
 
-    private loadOrdersCount(): void {
-        this.orderService.getOrders().subscribe(orders => {
-            this.ordersCount = orders.length;
-        });
-    }
+    this.role = this.authService.getRole();
+
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
 }
