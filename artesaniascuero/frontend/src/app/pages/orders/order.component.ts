@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 
@@ -37,7 +37,8 @@ export class OrderComponent implements OnInit {
 	constructor(
 		private orderService: OrderService,
 		private materialService: MaterialService,
-		private location: Location
+		private location: Location,
+		private cdr: ChangeDetectorRef
 	) {}
 
 	ngOnInit(): void {
@@ -47,15 +48,18 @@ export class OrderComponent implements OnInit {
 
 	cargarPedidos(): void {
 		this.loading = true;
+		this.cdr.markForCheck();
 
 		this.orderService.getOrders().subscribe({
 			next: (data: Order[]) => {
 				this.orders = data;
 				this.loading = false;
+				this.cdr.markForCheck();
 			},
 			error: (err) => {
 				this.mensajeError = err?.error?.message || 'Error al cargar pedidos';
 				this.loading = false;
+				this.cdr.markForCheck();
 			}
 		});
 	}
@@ -64,9 +68,11 @@ export class OrderComponent implements OnInit {
 		this.materialService.getMaterials().subscribe({
 			next: (data: Material[]) => {
 				this.materials = data;
+				this.cdr.markForCheck();
 			},
 			error: () => {
 				this.mensajeError = 'No fue posible cargar materiales';
+				this.cdr.markForCheck();
 			}
 		});
 	}
@@ -119,9 +125,11 @@ export class OrderComponent implements OnInit {
 				};
 				this.mensajeExito = 'Pedido creado y stock actualizado correctamente';
 				this.cerrarModal();
+				this.cdr.markForCheck();
 			},
 			error: (err) => {
 				this.mensajeError = err?.error?.message || 'No se pudo crear el pedido';
+				this.cdr.markForCheck();
 			}
 		});
 	}

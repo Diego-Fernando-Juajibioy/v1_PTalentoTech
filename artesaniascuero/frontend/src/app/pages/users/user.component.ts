@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 
@@ -32,7 +32,8 @@ export class UserComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private location: Location
+    private location: Location,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -41,14 +42,18 @@ export class UserComponent implements OnInit {
 
   cargarUsuarios(): void {
     this.loading = true;
+    this.cdr.markForCheck();
+
     this.userService.getUsers().subscribe({
       next: (data: User[]) => {
         this.users = data;
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.mensajeError = err?.error?.message || 'Error al cargar usuarios';
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -98,9 +103,11 @@ export class UserComponent implements OnInit {
         this.cargarUsuarios();
         this.mensajeExito = this.editando ? 'Usuario actualizado correctamente' : 'Usuario creado correctamente';
         this.cerrarModal();
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.mensajeError = err?.error?.message || 'No se pudo guardar el usuario';
+        this.cdr.markForCheck();
       }
     });
   }
@@ -139,9 +146,11 @@ export class UserComponent implements OnInit {
       next: () => {
         this.mensajeExito = 'Usuario eliminado correctamente';
         this.cargarUsuarios();
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.mensajeError = err?.error?.message || 'No se pudo eliminar el usuario';
+        this.cdr.markForCheck();
       }
     });
   }

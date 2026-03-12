@@ -1,7 +1,7 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { isPlatformBrowser } from '@angular/common';
 
 interface LoginResponse {
@@ -25,7 +25,7 @@ export class AuthService {
         this.isBrowser = isPlatformBrowser(this.platformId);
     }
 
-    login(username: string, password: string): Observable<boolean> {
+    login(username: string, password: string): Observable<void> {
 
         return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { username, password }).pipe(
 
@@ -37,13 +37,8 @@ export class AuthService {
                     localStorage.setItem('username', response.username);
                 }
 
-                return true;
+                return;
 
-            }),
-
-            catchError(error => {
-                console.error('Login error:', error);
-                return of(false);
             })
 
         );

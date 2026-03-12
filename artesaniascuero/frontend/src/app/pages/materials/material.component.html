@@ -38,6 +38,10 @@
       {{ mensajeExito }}
     </div>
 
+    <div *ngIf="mensajeError" class="mensaje-error">
+      {{ mensajeError }}
+    </div>
+
     <div *ngIf="loading" class="loading">
       <div class="spinner"></div>
     </div>

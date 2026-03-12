@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MaterialLot } from '../../models/material-lot.model';
@@ -35,7 +35,8 @@ export class MaterialLotComponent implements OnInit {
     constructor(
         private materialLotService: MaterialLotService,
         private materialService: MaterialService,
-        private location: Location
+        private location: Location,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -47,9 +48,11 @@ export class MaterialLotComponent implements OnInit {
         this.materialService.getMaterials().subscribe({
             next: (data: Material[]) => {
                 this.materials = data;
+                this.cdr.markForCheck();
             },
             error: () => {
                 this.mensajeError = 'Error al cargar materiales';
+                this.cdr.markForCheck();
             }
         });
     }
@@ -57,16 +60,19 @@ export class MaterialLotComponent implements OnInit {
     cargarMaterialLots(): void {
 
         this.loading = true;
+        this.cdr.markForCheck();
         this.materialLotService.getMaterialLots().subscribe({
 
             next: (data: MaterialLot[]) => {
                 this.materialLots = data;
                 this.loading = false;
+                this.cdr.markForCheck();
             },
 
             error: (err) => {
                 this.mensajeError = err?.error?.message || 'Error al cargar lotes de materiales';
                 this.loading = false;
+                this.cdr.markForCheck();
             }
 
         });
@@ -129,9 +135,11 @@ export class MaterialLotComponent implements OnInit {
                     ? 'Lote de inventario actualizado correctamente'
                     : 'Lote de inventario creado correctamente';
                 this.cerrarModal();
+                this.cdr.markForCheck();
             },
             error: (err) => {
                 this.mensajeError = err?.error?.message || 'No se pudo crear el lote de inventario';
+                this.cdr.markForCheck();
             }
         });
     }
@@ -159,9 +167,11 @@ export class MaterialLotComponent implements OnInit {
             next: () => {
                 this.mensajeExito = 'Lote eliminado correctamente';
                 this.cargarMaterialLots();
+                this.cdr.markForCheck();
             },
             error: (err) => {
                 this.mensajeError = err?.error?.message || 'No se pudo eliminar el lote';
+                this.cdr.markForCheck();
             }
         });
     }

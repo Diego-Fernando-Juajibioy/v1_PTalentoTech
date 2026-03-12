@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 
@@ -29,7 +29,8 @@ export class MaterialComponent implements OnInit {
 
   constructor(
     private materialService: MaterialService,
-    private location: Location
+    private location: Location,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -38,18 +39,23 @@ export class MaterialComponent implements OnInit {
 
   cargarMateriales(): void {
 
+    this.mensajeError = '';
     this.loading = true;
+    this.cdr.markForCheck();
 
     this.materialService.getMaterials().subscribe({
 
       next: (data: Material[]) => {
         this.materiales = data;
         this.loading = false;
+        this.cdr.markForCheck();
       },
 
       error: (err) => {
+        this.mensajeError = err?.error?.message || 'Error al cargar materiales';
         console.error('Error al cargar materiales:', err);
         this.loading = false;
+        this.cdr.markForCheck();
       }
 
     });
@@ -124,12 +130,14 @@ export class MaterialComponent implements OnInit {
 
         this.mensajeExito = this.editando ? 'Material actualizado correctamente' : 'Material creado correctamente';
         this.cerrarModal();
+        this.cdr.markForCheck();
 
       },
 
       error: (err) => {
         this.mensajeError = err?.error?.message || 'No se pudo guardar el material';
         console.error("Error guardando material", err);
+        this.cdr.markForCheck();
       }
 
     });
@@ -160,9 +168,11 @@ export class MaterialComponent implements OnInit {
       next: () => {
         this.mensajeExito = 'Material eliminado correctamente';
         this.cargarMateriales();
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.mensajeError = err?.error?.message || 'No se pudo eliminar el material';
+        this.cdr.markForCheck();
       }
     });
   }
