@@ -17,6 +17,14 @@ export class MaterialService {
   }
 
   createMaterial(material: any) : Observable<any> {
-    return this.http.post(`${this.apiUrl}/materials`, material);
+    return this.http.post(`${this.apiUrl}`, material);
+  }
+
+  updateMaterial(id: number, material: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, material);
+  }
+
+  deleteMaterial(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

@@ -2,10 +2,12 @@
 
   <div class="material-card">
 
-    <!-- HEADER -->
     <div class="header-material">
 
-      <h2 class="title">Catálogo de Materiales</h2>
+      <div class="header-left">
+        <button class="btn-volver" (click)="volver()">← Volver</button>
+        <h2 class="title">Catálogo de Materiales</h2>
+      </div>
 
       <button class="btn-agregar" (click)="abrirModal()">
         + Agregar Material
@@ -13,7 +15,6 @@
 
     </div>
 
-    <!-- FILTRO -->
     <div class="filtro">
 
       <label>Filtrar por categoría</label>
@@ -29,17 +30,18 @@
 
     </div>
 
-    <!-- CONTADOR -->
     <p class="contador">
       Mostrando {{ materialesFiltrados.length }} de {{ materiales.length }} materiales
     </p>
 
-    <!-- LOADING -->
+    <div *ngIf="mensajeExito" class="mensaje-exito">
+      {{ mensajeExito }}
+    </div>
+
     <div *ngIf="loading" class="loading">
       <div class="spinner"></div>
     </div>
 
-    <!-- TABLA -->
     <table *ngIf="!loading">
 
       <thead>
@@ -50,6 +52,7 @@
           <th>Unidad</th>
           <th>Stock mín</th>
           <th>Estado</th>
+          <th>Acciones</th>
         </tr>
       </thead>
 
@@ -74,13 +77,17 @@
             </span>
           </td>
 
+          <td class="acciones">
+            <button class="btn-tabla editar" (click)="editarMaterial(m)">Editar</button>
+            <button class="btn-tabla eliminar" (click)="eliminarMaterial(m)">Eliminar</button>
+          </td>
+
         </tr>
 
       </tbody>
 
     </table>
 
-    <!-- ALERTA -->
     <div *ngIf="!loading && materialesFiltrados.length === 0" class="alerta">
       No hay materiales que coincidan con el filtro seleccionado
     </div>
@@ -96,9 +103,13 @@
 
   <div class="modal-container" >
 
-    <h3>Agregar Material</h3>
+    <h3>{{ editando ? 'Editar Material' : 'Agregar Material' }}</h3>
 
-    <form (ngSubmit)="guardarMaterial()">
+    <form #materialForm="ngForm" (ngSubmit)="guardarMaterial(materialForm)">
+
+      <div *ngIf="mensajeError" class="mensaje-error">
+        {{ mensajeError }}
+      </div>
 
       <div class="form-group">
         <label>Nombre</label>
@@ -114,7 +125,10 @@
 
         <select
           [(ngModel)]="nuevoMaterial.category"
-          name="category">
+          name="category"
+          required>
+
+          <option value="">Selecciona una categoría</option>
 
           <option value="Materia prima">Materia prima</option>
           <option value="Insumos">Insumos</option>
@@ -130,7 +144,8 @@
         <input
           type="text"
           [(ngModel)]="nuevoMaterial.base_unit"
-          name="base_unit">
+          name="base_unit"
+          required>
       </div>
 
       <div class="form-group">
@@ -138,8 +153,11 @@
 
         <input
           type="number"
+          step="0.01"
+          min="0"
           [(ngModel)]="nuevoMaterial.stock_min"
-          name="stock_min">
+          name="stock_min"
+          required>
       </div>
 
       <div class="form-group checkbox">
@@ -159,7 +177,7 @@
 
       <div class="modal-buttons">
 
-        <button type="submit" class="btn-guardar" (click)="cerrarModal()">
+        <button type="submit" class="btn-guardar">
           Guardar
         </button>
 

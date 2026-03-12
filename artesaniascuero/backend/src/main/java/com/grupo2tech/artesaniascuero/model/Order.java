@@ -1,23 +1,46 @@
 package com.grupo2tech.artesaniascuero.model;
-import jakarta.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column (nullable = false)
-    private long customer_id;
+    @Column(nullable = false, unique = true)
+    @JsonProperty("order_number")
+    @NotBlank(message = "El numero de orden es obligatorio")
+    private String orderNumber;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
+    @JsonProperty("customer_id")
+    private long customerId;
+
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "material_id", nullable = false)
+    @NotNull(message = "El material es obligatorio")
+    private Material material;
+
+    @Column(nullable = false)
+    @DecimalMin(value = "0.01", message = "La cantidad debe ser mayor a cero")
+    private double quantity;
+
+    @Column(nullable = false)
     private String status; 
 
-    @Column (nullable = false)
-    private String promised_date;
+    @Column(nullable = false)
+    @JsonProperty("promised_date")
+    private String promisedDate;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private String notes;
-    
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -27,12 +50,40 @@ public class Order {
         this.id = id;
     }
 
-    public long getCustomer_id() {
-        return customer_id;
+    @JsonProperty("order_number")
+    public String getOrderNumber() {
+        return orderNumber;
     }
 
-    public void setCustomer_id(long customer_id) {
-        this.customer_id = customer_id;
+    @JsonProperty("order_number")
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    @JsonProperty("customer_id")
+    public long getCustomerId() {
+        return customerId;
+    }
+
+    @JsonProperty("customer_id")
+    public void setCustomerId(long customerId) {
+        this.customerId = customerId;
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
+
+    public double getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
     }
 
     public String getStatus() {
@@ -43,18 +94,20 @@ public class Order {
         this.status = status;
     }
 
-    public String getPromised_date() {
-        return promised_date;
+    @JsonProperty("promised_date")
+    public String getPromisedDate() {
+        return promisedDate;
     }
 
-    public void setPromised_date(String promised_date) {
-        this.promised_date = promised_date;
+    @JsonProperty("promised_date")
+    public void setPromisedDate(String promisedDate) {
+        this.promisedDate = promisedDate;
     }
 
     public String getNotes() {
         return notes;
-    }   
-    
+    }
+
     public void setNotes(String notes) {
         this.notes = notes;
     }

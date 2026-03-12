@@ -3,6 +3,7 @@ import org.springframework.web.bind.annotation.*;
 import com.grupo2tech.artesaniascuero.model.Material;
 import com.grupo2tech.artesaniascuero.service.MaterialService;
 import java.util.List;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
@@ -19,7 +20,7 @@ public class MaterialController {
 
     // Crear material
     @PostMapping
-    public Material createMaterial(@RequestBody Material material){
+    public Material createMaterial(@Valid @RequestBody Material material){
         return materialService.save(material);
     }
 
@@ -37,7 +38,7 @@ public class MaterialController {
 
     // Actualizar material
     @PutMapping("/{id}")
-    public Material updateMaterial(@PathVariable Long id, @RequestBody Material material){
+    public Material updateMaterial(@PathVariable Long id, @Valid @RequestBody Material material){
         return materialService.updateMaterial(id, material);
     }
 

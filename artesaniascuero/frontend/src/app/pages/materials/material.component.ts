@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { CommonModule, Location } from '@angular/common';
+import { FormsModule, NgForm } from '@angular/forms';
 
 import { Material } from '../../models/material.model';
 import { MaterialService } from '../../core/services/material.service';
@@ -16,22 +16,21 @@ export class MaterialComponent implements OnInit {
 
   materiales: Material[] = [];
   loading: boolean = false;
+  mensajeError: string = '';
+  mensajeExito: string = '';
+  editando: boolean = false;
+  materialEditandoId: number | null = null;
 
   mostrarModal: boolean = false;
 
-  // objeto para crear material
-  nuevoMaterial: any = {
-    name: '',
-    category: '',
-    base_unit: '',
-    stock_min: 0,
-    active: true
-  };
 
   // filtro
   filtroCategoria: string = '';
 
-  constructor(private materialService: MaterialService) { }
+  constructor(
+    private materialService: MaterialService,
+    private location: Location
+  ) { }
 
   ngOnInit(): void {
     this.cargarMateriales();
@@ -58,18 +57,55 @@ export class MaterialComponent implements OnInit {
   }
 
   abrirModal(): void {
+    this.mensajeError = '';
+    this.editando = false;
+    this.materialEditandoId = null;
+    this.nuevoMaterial = {
+      name: '',
+      category: '',
+      base_unit: '',
+      stock_min: 0,
+      active: true
+    };
     this.mostrarModal = true;
   }
 
   cerrarModal(): void {
+    this.mensajeError = '';
     this.mostrarModal = false;
   }
 
-  guardarMaterial(): void {
+  // objeto para crear material
+  nuevoMaterial: any = {
+    name: '',
+    category: '',
+    base_unit: '',
+    stock_min: 0,
+    active: true
+  };
+
+  guardarMaterial(form: NgForm): void {
+
+    this.mensajeError = '';
+    this.mensajeExito = '';
+
+    if (form.invalid) {
+      this.mensajeError = 'Completa todos los campos obligatorios';
+      return;
+    }
+
+    if (Number(this.nuevoMaterial.stock_min) < 0) {
+      this.mensajeError = 'El stock minimo no puede ser negativo';
+      return;
+    }
 
     console.log("Material enviado:", this.nuevoMaterial);
 
-    this.materialService.createMaterial(this.nuevoMaterial).subscribe({
+    const request$ = this.editando && this.materialEditandoId !== null
+      ? this.materialService.updateMaterial(this.materialEditandoId, this.nuevoMaterial)
+      : this.materialService.createMaterial(this.nuevoMaterial);
+
+    request$.subscribe({
 
       next: (data) => {
 
@@ -86,16 +122,49 @@ export class MaterialComponent implements OnInit {
           active: true
         };
 
+        this.mensajeExito = this.editando ? 'Material actualizado correctamente' : 'Material creado correctamente';
         this.cerrarModal();
 
       },
 
       error: (err) => {
-        console.error("Error creando material", err);
+        this.mensajeError = err?.error?.message || 'No se pudo guardar el material';
+        console.error("Error guardando material", err);
       }
 
     });
 
+  }
+
+  editarMaterial(material: Material): void {
+    this.mensajeError = '';
+    this.editando = true;
+    this.materialEditandoId = material.id;
+    this.nuevoMaterial = {
+      name: material.name,
+      category: material.category,
+      base_unit: material.base_unit,
+      stock_min: material.stock_min,
+      active: material.active
+    };
+    this.mostrarModal = true;
+  }
+
+  eliminarMaterial(material: Material): void {
+    const confirmado = confirm(`¿Eliminar el material ${material.name}?`);
+    if (!confirmado) {
+      return;
+    }
+
+    this.materialService.deleteMaterial(material.id).subscribe({
+      next: () => {
+        this.mensajeExito = 'Material eliminado correctamente';
+        this.cargarMateriales();
+      },
+      error: (err) => {
+        this.mensajeError = err?.error?.message || 'No se pudo eliminar el material';
+      }
+    });
   }
 
   // materiales filtrados por categoría
@@ -109,6 +178,10 @@ export class MaterialComponent implements OnInit {
       m => m.category === this.filtroCategoria
     );
 
+  }
+
+  volver(): void {
+    this.location.back();
   }
 
 }

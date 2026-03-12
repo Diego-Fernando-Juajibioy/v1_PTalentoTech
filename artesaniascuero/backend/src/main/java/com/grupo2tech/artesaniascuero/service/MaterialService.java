@@ -12,10 +12,10 @@ public class MaterialService {
         this.materialRepository = materialRepository;
     }
 
-    public Material createMaterial(Material material){
+    public Material save(Material material){
         // lógica de negocio
         if(materialRepository.findByName(material.getName()) != null){
-            throw new RuntimeException("El material ya existe");
+            throw new IllegalStateException("El material ya existe");
         }
 
         return materialRepository.save(material);
@@ -48,11 +48,6 @@ public class MaterialService {
             throw new RuntimeException("El material no existe");
         }
         materialRepository.deleteById(id);
-    }
-
-    public Material save(Material material) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
     }
 
 }
