@@ -50,4 +50,9 @@ public class MaterialService {
         materialRepository.deleteById(id);
     }
 
+    public Material save(Material material) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'save'");
+    }
+
 }

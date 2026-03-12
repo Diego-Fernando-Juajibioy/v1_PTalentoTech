@@ -1,0 +1,181 @@
+<div class="material-page">
+
+  <div class="material-card">
+
+    <!-- HEADER -->
+    <div class="header-material">
+
+      <h2 class="title">Catálogo de Materiales</h2>
+
+      <button class="btn-agregar" (click)="abrirModal()">
+        + Agregar Material
+      </button>
+
+    </div>
+
+    <!-- FILTRO -->
+    <div class="filtro">
+
+      <label>Filtrar por categoría</label>
+
+      <select [(ngModel)]="filtroCategoria">
+
+        <option value="">Todas las categorías</option>
+        <option value="Materia prima">Materia prima</option>
+        <option value="Insumos">Insumos</option>
+        <option value="Accesorios">Accesorios</option>
+
+      </select>
+
+    </div>
+
+    <!-- CONTADOR -->
+    <p class="contador">
+      Mostrando {{ materialesFiltrados.length }} de {{ materiales.length }} materiales
+    </p>
+
+    <!-- LOADING -->
+    <div *ngIf="loading" class="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- TABLA -->
+    <table *ngIf="!loading">
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Unidad</th>
+          <th>Stock mín</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let m of materialesFiltrados">
+
+          <td>{{ m.id }}</td>
+          <td class="nombre">{{ m.name }}</td>
+          <td>{{ m.category }}</td>
+          <td>{{ m.base_unit }}</td>
+          <td>{{ m.stock_min }}</td>
+
+          <td>
+            <span 
+              class="estado"
+              [class.activo]="m.active"
+              [class.inactivo]="!m.active">
+
+              {{ m.active ? 'Activo' : 'Inactivo' }}
+
+            </span>
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+    <!-- ALERTA -->
+    <div *ngIf="!loading && materialesFiltrados.length === 0" class="alerta">
+      No hay materiales que coincidan con el filtro seleccionado
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- MODAL -->
+
+<div class="modal-overlay" *ngIf="mostrarModal">
+
+  <div class="modal-container" >
+
+    <h3>Agregar Material</h3>
+
+    <form (ngSubmit)="guardarMaterial()">
+
+      <div class="form-group">
+        <label>Nombre</label>
+        <input 
+          type="text"
+          [(ngModel)]="nuevoMaterial.name"
+          name="name"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label>Categoría</label>
+
+        <select
+          [(ngModel)]="nuevoMaterial.category"
+          name="category">
+
+          <option value="Materia prima">Materia prima</option>
+          <option value="Insumos">Insumos</option>
+          <option value="Accesorios">Accesorios</option>
+
+        </select>
+
+      </div>
+
+      <div class="form-group">
+        <label>Unidad base</label>
+
+        <input
+          type="text"
+          [(ngModel)]="nuevoMaterial.base_unit"
+          name="base_unit">
+      </div>
+
+      <div class="form-group">
+        <label>Stock mínimo</label>
+
+        <input
+          type="number"
+          [(ngModel)]="nuevoMaterial.stock_min"
+          name="stock_min">
+      </div>
+
+      <div class="form-group checkbox">
+
+        <label>
+
+          <input
+            type="checkbox"
+            [(ngModel)]="nuevoMaterial.active"
+            name="active">
+
+          Activo
+
+        </label>
+
+      </div>
+
+      <div class="modal-buttons">
+
+        <button type="submit" class="btn-guardar" (click)="cerrarModal()">
+          Guardar
+        </button>
+
+        <button
+          type="button"
+          class="btn-cancelar"
+          (click)="cerrarModal()">
+
+          Cancelar
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

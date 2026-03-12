@@ -3,5 +3,6 @@ export interface Material {
   name: string;
   category: string;
   base_unit: string;
+  stock_min: string;
   active: boolean;
 }

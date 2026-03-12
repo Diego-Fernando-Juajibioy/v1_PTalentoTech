@@ -17,6 +17,9 @@ public class Material {
     private String base_unit;
 
     @Column(nullable = false)
+    private double stock_min;
+
+    @Column(nullable = false)
     private boolean active = true; 
 
     // Getters and Setters
@@ -51,6 +54,14 @@ public class Material {
 
     public void setBaseUnit(String base_unit) {
         this.base_unit = base_unit;
+    }
+
+    public double getStockMin() {
+        return stock_min;
+    }
+
+    public void setStockMin(double stock_min) {
+        this.stock_min = stock_min;
     }
 
     public boolean isActive() {
